@@ -1,0 +1,19 @@
+meta {
+  name: Criar Porto
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/portos
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nome": "Porto de Santos",
+    "cidade": "Santos",
+    "pais": "Brasil"
+  }
+}

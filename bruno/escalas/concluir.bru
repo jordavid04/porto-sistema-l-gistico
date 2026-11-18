@@ -1,0 +1,18 @@
+meta {
+  name: Concluir Escala
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:3000/api/escalas/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "partida": "2026-11-18T17:00",
+    "status": "concluido"
+  }
+}

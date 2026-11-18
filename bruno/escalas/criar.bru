@@ -1,0 +1,19 @@
+meta {
+  name: Criar Escala
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/escalas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "navio_id": 1,
+    "porto_id": 1,
+    "chegada": "2026-11-18T08:00"
+  }
+}

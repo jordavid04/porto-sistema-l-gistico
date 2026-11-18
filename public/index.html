@@ -4,176 +4,535 @@
   <meta charset="UTF-8">
   <title>Sistema Portuário</title>
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
-    h1 { color: #0f4c81; }
-    h2 { border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 2rem; }
-    input, select, button { padding: 8px 10px; margin: 4px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 14px; }
-    button { cursor: pointer; background: #0f4c81; color: white; border: none; }
-    button.danger { background: #dc2626; }
-    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
-    .row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
-    .badge { background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; }
+
+    header {
+      background: #0f4c81; color: white;
+      padding: 1rem 2rem; display: flex; align-items: center; gap: 12px;
+    }
+    header h1 { font-size: 1.3rem; font-weight: 600; }
+
+    nav {
+      background: #1e3a5f; display: flex; gap: 2px; padding: 0 2rem;
+    }
+    nav button {
+      background: none; border: none; color: #93c5fd;
+      padding: 10px 18px; cursor: pointer; font-size: 14px; border-radius: 0;
+      border-bottom: 3px solid transparent; transition: all .15s;
+    }
+    nav button.ativo { color: white; border-bottom-color: #60a5fa; }
+    nav button:hover { color: white; }
+
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+    .secao { display: none; }
+    .secao.ativa { display: block; }
+
+    .card {
+      background: white; border: 1px solid #e2e8f0;
+      border-radius: 10px; padding: 14px 18px; margin: 10px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+    .card-titulo { font-weight: 600; font-size: 15px; }
+    .card-sub { color: #64748b; font-size: 13px; margin-top: 4px; }
+
+    .form-linha {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      background: white; border: 1px solid #e2e8f0;
+      border-radius: 10px; padding: 14px; margin-bottom: 16px;
+    }
+    input, select {
+      padding: 8px 10px; border-radius: 6px;
+      border: 1px solid #cbd5e1; font-size: 14px; color: #1e293b;
+    }
+    input:focus, select:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+
+    .btn { padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .btn-primary { background: #0f4c81; color: white; }
+    .btn-primary:hover { background: #1d6aab; }
+    .btn-danger { background: #fee2e2; color: #dc2626; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-secondary { background: #f1f5f9; color: #475569; }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 500;
+    }
+    .badge-azul { background: #dbeafe; color: #1d4ed8; }
+    .badge-verde { background: #dcfce7; color: #16a34a; }
+    .badge-cinza { background: #f1f5f9; color: #475569; }
+    .badge-amarelo { background: #fef9c3; color: #a16207; }
+
+    .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .flex1 { flex: 1; }
+
+    .detalhes { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
+    .detalhes h4 { font-size: 13px; color: #64748b; margin-bottom: 6px; }
+    .item-detalhe {
+      background: #f8fafc; border-radius: 6px;
+      padding: 6px 10px; margin: 4px 0; font-size: 13px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .vazio { color: #94a3b8; font-size: 14px; text-align: center; padding: 2rem; }
+
+    .resumo {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;
+      margin-bottom: 24px;
+    }
+    .resumo-card {
+      background: white; border-radius: 10px; padding: 16px;
+      border: 1px solid #e2e8f0; text-align: center;
+    }
+    .resumo-num { font-size: 2rem; font-weight: 700; color: #0f4c81; }
+    .resumo-label { font-size: 13px; color: #64748b; margin-top: 4px; }
   </style>
 </head>
 <body>
-  <h1>⚓ Sistema Portuário</h1>
 
-  <h2>Navios</h2>
-  <div class="row">
-    <input id="n-nome" placeholder="Nome do navio" />
-    <input id="n-bandeira" placeholder="Bandeira" />
-    <select id="n-tipo">
-      <option value="cargueiro">Cargueiro</option>
-      <option value="tanqueiro">Tanqueiro</option>
-      <option value="porta-container">Porta-container</option>
-      <option value="graneleiro">Graneleiro</option>
-    </select>
-    <input id="n-cap" placeholder="Capacidade (ton)" type="number" />
-    <button onclick="criarNavio()">Adicionar</button>
+<header>
+  <span style="font-size:1.5rem">⚓</span>
+  <h1>Sistema de Controle Portuário</h1>
+</header>
+
+<nav>
+  <button class="ativo" onclick="trocarSecao('visao-geral', this)">Visão Geral</button>
+  <button onclick="trocarSecao('navios', this)">Navios</button>
+  <button onclick="trocarSecao('portos', this)">Portos</button>
+  <button onclick="trocarSecao('escalas', this)">Escalas</button>
+  <button onclick="trocarSecao('containers', this)">Containers</button>
+</nav>
+
+<main>
+
+  <!-- VISÃO GERAL -->
+  <div id="visao-geral" class="secao ativa">
+    <h2 style="margin-bottom:16px">Resumo</h2>
+    <div class="resumo" id="resumo-cards"></div>
+    <h3 style="margin-bottom:10px">Últimas Escalas</h3>
+    <div id="ultimas-escalas"></div>
   </div>
-  <div id="lista-navios"></div>
 
-  <h2>Portos</h2>
-  <div class="row">
-    <input id="p-nome" placeholder="Nome do porto" />
-    <input id="p-cidade" placeholder="Cidade" />
-    <input id="p-pais" placeholder="País" value="Brasil" />
-    <button onclick="criarPorto()">Adicionar</button>
+  <!-- NAVIOS -->
+  <div id="navios" class="secao">
+    <h2 style="margin-bottom:16px">Navios</h2>
+    <div class="form-linha">
+      <input id="n-nome" placeholder="Nome do navio" style="flex:2;min-width:140px" />
+      <input id="n-bandeira" placeholder="Bandeira" style="flex:1;min-width:100px" />
+      <select id="n-tipo" style="flex:1;min-width:140px">
+        <option value="cargueiro">Cargueiro</option>
+        <option value="tanqueiro">Tanqueiro</option>
+        <option value="porta-container">Porta-container</option>
+        <option value="graneleiro">Graneleiro</option>
+      </select>
+      <input id="n-cap" placeholder="Capacidade (ton)" type="number" style="flex:1;min-width:120px" />
+      <button class="btn btn-primary" onclick="criarNavio()">+ Adicionar</button>
+    </div>
+    <input id="busca-navio" placeholder="🔍 Buscar navio..." style="width:100%;margin-bottom:12px" oninput="buscarNavios(this.value)" />
+    <div id="lista-navios"></div>
   </div>
-  <div id="lista-portos"></div>
 
-  <h2>Escalas</h2>
-  <div class="row">
-    <select id="e-navio"></select>
-    <select id="e-porto"></select>
-    <input id="e-chegada" type="datetime-local" />
-    <button onclick="criarEscala()">Registrar</button>
+  <!-- PORTOS -->
+  <div id="portos" class="secao">
+    <h2 style="margin-bottom:16px">Portos</h2>
+    <div class="form-linha">
+      <input id="p-nome" placeholder="Nome do porto" style="flex:2;min-width:140px" />
+      <input id="p-cidade" placeholder="Cidade" style="flex:1;min-width:100px" />
+      <input id="p-pais" placeholder="País" value="Brasil" style="flex:1;min-width:80px" />
+      <button class="btn btn-primary" onclick="criarPorto()">+ Adicionar</button>
+    </div>
+    <div id="lista-portos"></div>
   </div>
-  <div id="lista-escalas"></div>
 
-  <h2>Containers</h2>
-  <div class="row">
-    <input id="c-codigo" placeholder="Código do container" />
-    <select id="c-tipo">
-      <option value="20ft">20ft</option>
-      <option value="40ft">40ft</option>
-      <option value="40ft-HC">40ft High Cube</option>
-    </select>
-    <input id="c-peso" placeholder="Peso (kg)" type="number" />
-    <button onclick="criarContainer()">Adicionar</button>
+  <!-- ESCALAS -->
+  <div id="escalas" class="secao">
+    <h2 style="margin-bottom:16px">Escalas</h2>
+    <div class="form-linha">
+      <select id="e-navio" style="flex:2;min-width:160px"></select>
+      <select id="e-porto" style="flex:2;min-width:160px"></select>
+      <input id="e-chegada" type="datetime-local" style="flex:1;min-width:160px" />
+      <button class="btn btn-primary" onclick="criarEscala()">+ Registrar</button>
+    </div>
+    <div class="row" style="margin-bottom:12px;gap:6px">
+      <span style="font-size:13px;color:#64748b">Filtrar:</span>
+      <button class="btn btn-secondary" onclick="carregarEscalas()">Todas</button>
+      <button class="btn btn-secondary" onclick="carregarEscalas('atracado')">Atracadas</button>
+      <button class="btn btn-secondary" onclick="carregarEscalas('agendado')">Agendadas</button>
+      <button class="btn btn-secondary" onclick="carregarEscalas('concluido')">Concluídas</button>
+    </div>
+    <div id="lista-escalas"></div>
   </div>
-  <div id="lista-containers"></div>
 
-  <script>
-    async function carregarNavios() {
-      const dados = await fetch("/api/navios").then(r => r.json())
-      document.getElementById("lista-navios").innerHTML = dados.map(n => `
-        <div class="card">
-          <div class="row">
-            <span style="flex:1"><strong>${n.nome}</strong> <span class="badge">${n.tipo}</span> 🏳️ ${n.bandeira}</span>
-            <button class="danger" onclick="deletar('navios', ${n.id})">🗑️</button>
+  <!-- CONTAINERS -->
+  <div id="containers" class="secao">
+    <h2 style="margin-bottom:16px">Containers</h2>
+    <div class="form-linha">
+      <input id="c-codigo" placeholder="Código do container" style="flex:2;min-width:160px" />
+      <select id="c-tipo" style="flex:1;min-width:120px">
+        <option value="20ft">20ft</option>
+        <option value="40ft">40ft</option>
+        <option value="40ft-HC">40ft High Cube</option>
+      </select>
+      <input id="c-peso" placeholder="Peso (kg)" type="number" style="flex:1;min-width:100px" />
+      <select id="c-escala" style="flex:2;min-width:180px"></select>
+      <button class="btn btn-primary" onclick="criarContainer()">+ Adicionar</button>
+    </div>
+    <div id="lista-containers"></div>
+  </div>
+
+</main>
+
+<script>
+  // ── Navegação ──────────────────────────────────────────────────
+
+  function trocarSecao(id, btn) {
+    document.querySelectorAll(".secao").forEach(s => s.classList.remove("ativa"))
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("ativo"))
+    document.getElementById(id).classList.add("ativa")
+    btn.classList.add("ativo")
+
+    if (id === "visao-geral") carregarResumo()
+    if (id === "escalas") { carregarSelectNaviosPortos(); carregarEscalas() }
+    if (id === "containers") { carregarSelectEscalas(); carregarContainers() }
+  }
+
+  // ── Visão Geral ────────────────────────────────────────────────
+
+  async function carregarResumo() {
+    const [navios, portos, escalas, containers] = await Promise.all([
+      fetch("/api/navios").then(r => r.json()),
+      fetch("/api/portos").then(r => r.json()),
+      fetch("/api/escalas").then(r => r.json()),
+      fetch("/api/containers").then(r => r.json()),
+    ])
+
+    document.getElementById("resumo-cards").innerHTML = `
+      <div class="resumo-card"><div class="resumo-num">${navios.length}</div><div class="resumo-label">Navios</div></div>
+      <div class="resumo-card"><div class="resumo-num">${portos.length}</div><div class="resumo-label">Portos</div></div>
+      <div class="resumo-card"><div class="resumo-num">${escalas.filter(e => e.status === "atracado").length}</div><div class="resumo-label">Atracados agora</div></div>
+      <div class="resumo-card"><div class="resumo-num">${containers.length}</div><div class="resumo-label">Containers</div></div>
+    `
+
+    const ultimas = escalas.slice(0, 5)
+    document.getElementById("ultimas-escalas").innerHTML = ultimas.length
+      ? ultimas.map(e => `
+          <div class="card">
+            <div class="row">
+              <div class="flex1">
+                <div class="card-titulo">${e.navio_nome} → ${e.porto_nome}</div>
+                <div class="card-sub">Chegada: ${formatarData(e.chegada)}</div>
+              </div>
+              ${badgeStatus(e.status)}
+            </div>
+          </div>`).join("")
+      : `<div class="vazio">Nenhuma escala registrada ainda.</div>`
+  }
+
+  // ── Navios ─────────────────────────────────────────────────────
+
+  async function carregarNavios(q = "") {
+    const url = q ? `/api/navios?q=${encodeURIComponent(q)}` : "/api/navios"
+    const dados = await fetch(url).then(r => r.json())
+    const el = document.getElementById("lista-navios")
+
+    if (!dados.length) { el.innerHTML = `<div class="vazio">Nenhum navio encontrado.</div>`; return }
+
+    el.innerHTML = dados.map(n => `
+      <div class="card">
+        <div class="row">
+          <div class="flex1">
+            <div class="card-titulo">${n.nome} <span class="badge badge-azul">${n.tipo}</span></div>
+            <div class="card-sub">🏳️ ${n.bandeira} ${n.capacidade_ton ? `· ${n.capacidade_ton.toLocaleString()} ton` : ""}</div>
           </div>
+          <button class="btn btn-secondary" onclick="toggleDetalhesNavio(${n.id})">Escalas</button>
+          <button class="btn btn-danger" onclick="deletar('navios', ${n.id}, carregarNavios)">🗑️</button>
         </div>
-      `).join("") || "<p>Nenhum navio cadastrado.</p>"
+        <div id="det-navio-${n.id}" style="display:none"></div>
+      </div>
+    `).join("")
+  }
 
-      document.getElementById("e-navio").innerHTML =
-        dados.map(n => `<option value="${n.id}">${n.nome}</option>`).join("")
-    }
+  async function toggleDetalhesNavio(id) {
+    const el = document.getElementById(`det-navio-${id}`)
+    if (el.style.display !== "none") { el.style.display = "none"; return }
 
-    async function criarNavio() {
-      const nome = document.getElementById("n-nome").value.trim()
-      const bandeira = document.getElementById("n-bandeira").value.trim()
-      const tipo = document.getElementById("n-tipo").value
-      const capacidade_ton = Number(document.getElementById("n-cap").value) || null
-      if (!nome || !bandeira) return alert("Nome e bandeira são obrigatórios")
-      await fetch("/api/navios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ nome, bandeira, tipo, capacidade_ton }) })
-      document.getElementById("n-nome").value = ""
-      document.getElementById("n-bandeira").value = ""
-      document.getElementById("n-cap").value = ""
-      carregarNavios()
-    }
+    const dados = await fetch(`/api/navios/${id}`).then(r => r.json())
+    el.style.display = "block"
+    el.innerHTML = `
+      <div class="detalhes">
+        <h4>Histórico de escalas</h4>
+        ${dados.escalas.length
+          ? dados.escalas.map(e => `
+              <div class="item-detalhe">
+                <span>⚓ ${e.porto_nome} — ${formatarData(e.chegada)}</span>
+                ${badgeStatus(e.status)}
+              </div>`).join("")
+          : `<div class="vazio" style="padding:.5rem">Nenhuma escala.</div>`
+        }
+      </div>`
+  }
 
-    async function carregarPortos() {
-      const dados = await fetch("/api/portos").then(r => r.json())
-      document.getElementById("lista-portos").innerHTML = dados.map(p => `
-        <div class="card">
-          <div class="row">
-            <span style="flex:1"><strong>${p.nome}</strong> — ${p.cidade}, ${p.pais}</span>
-            <button class="danger" onclick="deletar('portos', ${p.id})">🗑️</button>
+  function buscarNavios(q) { carregarNavios(q) }
+
+  async function criarNavio() {
+    const nome = document.getElementById("n-nome").value.trim()
+    const bandeira = document.getElementById("n-bandeira").value.trim()
+    const tipo = document.getElementById("n-tipo").value
+    const capacidade_ton = Number(document.getElementById("n-cap").value) || null
+
+    if (!nome || !bandeira) return alert("Nome e bandeira são obrigatórios")
+
+    const res = await fetch("/api/navios", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome, bandeira, tipo, capacidade_ton })
+    })
+    if (!res.ok) return alert((await res.json()).erro)
+
+    document.getElementById("n-nome").value = ""
+    document.getElementById("n-bandeira").value = ""
+    document.getElementById("n-cap").value = ""
+    carregarNavios()
+  }
+
+  // ── Portos ─────────────────────────────────────────────────────
+
+  async function carregarPortos() {
+    const dados = await fetch("/api/portos").then(r => r.json())
+    const el = document.getElementById("lista-portos")
+
+    if (!dados.length) { el.innerHTML = `<div class="vazio">Nenhum porto cadastrado.</div>`; return }
+
+    el.innerHTML = dados.map(p => `
+      <div class="card">
+        <div class="row">
+          <div class="flex1">
+            <div class="card-titulo">${p.nome}</div>
+            <div class="card-sub">📍 ${p.cidade}, ${p.pais}</div>
           </div>
+          <button class="btn btn-secondary" onclick="toggleDetalhesPorto(${p.id})">Escalas</button>
+          <button class="btn btn-danger" onclick="deletar('portos', ${p.id}, carregarPortos)">🗑️</button>
         </div>
-      `).join("") || "<p>Nenhum porto cadastrado.</p>"
+        <div id="det-porto-${p.id}" style="display:none"></div>
+      </div>
+    `).join("")
+  }
 
-      document.getElementById("e-porto").innerHTML =
-        dados.map(p => `<option value="${p.id}">${p.nome}</option>`).join("")
-    }
+  async function toggleDetalhesPorto(id) {
+    const el = document.getElementById(`det-porto-${id}`)
+    if (el.style.display !== "none") { el.style.display = "none"; return }
 
-    async function criarPorto() {
-      const nome = document.getElementById("p-nome").value.trim()
-      const cidade = document.getElementById("p-cidade").value.trim()
-      const pais = document.getElementById("p-pais").value.trim() || "Brasil"
-      if (!nome || !cidade) return alert("Nome e cidade são obrigatórios")
-      await fetch("/api/portos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ nome, cidade, pais }) })
-      document.getElementById("p-nome").value = ""
-      document.getElementById("p-cidade").value = ""
-      carregarPortos()
-    }
+    const dados = await fetch(`/api/portos/${id}`).then(r => r.json())
+    el.style.display = "block"
+    el.innerHTML = `
+      <div class="detalhes">
+        <h4>Escalas neste porto</h4>
+        ${dados.escalas.length
+          ? dados.escalas.map(e => `
+              <div class="item-detalhe">
+                <span>🚢 ${e.navio_nome} — ${formatarData(e.chegada)}</span>
+                ${badgeStatus(e.status)}
+              </div>`).join("")
+          : `<div class="vazio" style="padding:.5rem">Nenhuma escala.</div>`
+        }
+      </div>`
+  }
 
-    async function carregarEscalas() {
-      const dados = await fetch("/api/escalas").then(r => r.json())
-      document.getElementById("lista-escalas").innerHTML = dados.map(e => `
-        <div class="card">
-          <div class="row">
-            <span style="flex:1"><strong>${e.navio_nome}</strong> → ${e.porto_nome} <span class="badge">${e.status}</span><br>
-            <small>Chegada: ${e.chegada}</small></span>
-            <button class="danger" onclick="deletar('escalas', ${e.id})">🗑️</button>
+  async function criarPorto() {
+    const nome = document.getElementById("p-nome").value.trim()
+    const cidade = document.getElementById("p-cidade").value.trim()
+    const pais = document.getElementById("p-pais").value.trim() || "Brasil"
+
+    if (!nome || !cidade) return alert("Nome e cidade são obrigatórios")
+
+    const res = await fetch("/api/portos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome, cidade, pais })
+    })
+    if (!res.ok) return alert((await res.json()).erro)
+
+    document.getElementById("p-nome").value = ""
+    document.getElementById("p-cidade").value = ""
+    carregarPortos()
+  }
+
+  // ── Escalas ────────────────────────────────────────────────────
+
+  async function carregarSelectNaviosPortos() {
+    const [navios, portos] = await Promise.all([
+      fetch("/api/navios").then(r => r.json()),
+      fetch("/api/portos").then(r => r.json()),
+    ])
+    document.getElementById("e-navio").innerHTML =
+      navios.map(n => `<option value="${n.id}">${n.nome}</option>`).join("")
+    document.getElementById("e-porto").innerHTML =
+      portos.map(p => `<option value="${p.id}">${p.nome}</option>`).join("")
+  }
+
+  async function carregarEscalas(statusFiltro = "") {
+    const url = statusFiltro ? `/api/escalas?status=${statusFiltro}` : "/api/escalas"
+    const dados = await fetch(url).then(r => r.json())
+    const el = document.getElementById("lista-escalas")
+
+    if (!dados.length) { el.innerHTML = `<div class="vazio">Nenhuma escala encontrada.</div>`; return }
+
+    el.innerHTML = dados.map(e => `
+      <div class="card">
+        <div class="row">
+          <div class="flex1">
+            <div class="card-titulo">🚢 ${e.navio_nome} → ⚓ ${e.porto_nome}</div>
+            <div class="card-sub">
+              Chegada: ${formatarData(e.chegada)}
+              ${e.partida ? ` · Partida: ${formatarData(e.partida)}` : ""}
+            </div>
           </div>
+          ${badgeStatus(e.status)}
+          <button class="btn btn-secondary" onclick="toggleDetalhesEscala(${e.id})">Containers</button>
+          ${e.status !== "concluido"
+            ? `<button class="btn btn-secondary" onclick="concluirEscala(${e.id})">✓ Concluir</button>`
+            : ""}
+          <button class="btn btn-danger" onclick="deletar('escalas', ${e.id}, carregarEscalas)">🗑️</button>
         </div>
-      `).join("") || "<p>Nenhuma escala registrada.</p>"
-    }
+        <div id="det-escala-${e.id}" style="display:none"></div>
+      </div>
+    `).join("")
+  }
 
-    async function criarEscala() {
-      const navio_id = Number(document.getElementById("e-navio").value)
-      const porto_id = Number(document.getElementById("e-porto").value)
-      const chegada = document.getElementById("e-chegada").value
-      if (!chegada) return alert("Informe a data de chegada")
-      await fetch("/api/escalas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ navio_id, porto_id, chegada }) })
-      document.getElementById("e-chegada").value = ""
-      carregarEscalas()
-    }
+  async function toggleDetalhesEscala(id) {
+    const el = document.getElementById(`det-escala-${id}`)
+    if (el.style.display !== "none") { el.style.display = "none"; return }
 
-    async function carregarContainers() {
-      const dados = await fetch("/api/containers").then(r => r.json())
-      document.getElementById("lista-containers").innerHTML = dados.map(c => `
-        <div class="card">
-          <div class="row">
-            <span style="flex:1"><strong>${c.codigo}</strong> <span class="badge">${c.tipo}</span> ${c.peso_kg ? c.peso_kg + " kg" : ""}</span>
-            <button class="danger" onclick="deletar('containers', ${c.id})">🗑️</button>
+    const dados = await fetch(`/api/escalas/${id}`).then(r => r.json())
+    el.style.display = "block"
+    el.innerHTML = `
+      <div class="detalhes">
+        <h4>Containers nesta escala</h4>
+        ${dados.containers.length
+          ? dados.containers.map(c => `
+              <div class="item-detalhe">
+                <span>📦 ${c.codigo} <span class="badge badge-cinza">${c.tipo}</span> ${c.peso_kg ? `${c.peso_kg.toLocaleString()} kg` : ""}</span>
+                <button class="btn btn-danger" style="padding:3px 8px;font-size:12px" onclick="deletarContainer(${c.id}, ${id})">🗑️</button>
+              </div>`).join("")
+          : `<div class="vazio" style="padding:.5rem">Nenhum container nesta escala.</div>`
+        }
+      </div>`
+  }
+
+  async function criarEscala() {
+    const navio_id = Number(document.getElementById("e-navio").value)
+    const porto_id = Number(document.getElementById("e-porto").value)
+    const chegada = document.getElementById("e-chegada").value
+
+    if (!chegada) return alert("Informe a data de chegada")
+
+    const res = await fetch("/api/escalas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ navio_id, porto_id, chegada })
+    })
+    if (!res.ok) return alert((await res.json()).erro)
+
+    document.getElementById("e-chegada").value = ""
+    carregarEscalas()
+  }
+
+  async function concluirEscala(id) {
+    const agora = new Date().toISOString().slice(0, 16)
+    await fetch(`/api/escalas/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ partida: agora, status: "concluido" })
+    })
+    carregarEscalas()
+  }
+
+  // ── Containers ─────────────────────────────────────────────────
+
+  async function carregarSelectEscalas() {
+    const escalas = await fetch("/api/escalas").then(r => r.json())
+    document.getElementById("c-escala").innerHTML =
+      `<option value="">Sem escala vinculada</option>` +
+      escalas.map(e => `<option value="${e.id}">${e.navio_nome} → ${e.porto_nome}</option>`).join("")
+  }
+
+  async function carregarContainers() {
+    const dados = await fetch("/api/containers").then(r => r.json())
+    const el = document.getElementById("lista-containers")
+
+    if (!dados.length) { el.innerHTML = `<div class="vazio">Nenhum container cadastrado.</div>`; return }
+
+    el.innerHTML = dados.map(c => `
+      <div class="card">
+        <div class="row">
+          <div class="flex1">
+            <div class="card-titulo">📦 ${c.codigo} <span class="badge badge-cinza">${c.tipo}</span></div>
+            <div class="card-sub">${c.peso_kg ? `${c.peso_kg.toLocaleString()} kg` : "Peso não informado"}</div>
           </div>
+          <button class="btn btn-danger" onclick="deletarContainer(${c.id}, null)">🗑️</button>
         </div>
-      `).join("") || "<p>Nenhum container cadastrado.</p>"
-    }
+      </div>
+    `).join("")
+  }
 
-    async function criarContainer() {
-      const codigo = document.getElementById("c-codigo").value.trim()
-      const tipo = document.getElementById("c-tipo").value
-      const peso_kg = Number(document.getElementById("c-peso").value) || null
-      if (!codigo) return alert("Código é obrigatório")
-      const res = await fetch("/api/containers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ codigo, tipo, peso_kg }) })
-      if (!res.ok) return alert((await res.json()).erro)
-      document.getElementById("c-codigo").value = ""
-      document.getElementById("c-peso").value = ""
-      carregarContainers()
-    }
+  async function criarContainer() {
+    const codigo = document.getElementById("c-codigo").value.trim()
+    const tipo = document.getElementById("c-tipo").value
+    const peso_kg = Number(document.getElementById("c-peso").value) || null
+    const escala_id = Number(document.getElementById("c-escala").value) || null
 
-    async function deletar(entidade, id) {
-      if (!confirm("Remover registro?")) return
-      await fetch(`/api/${entidade}/${id}`, { method: "DELETE" })
-      carregarNavios(); carregarPortos(); carregarEscalas(); carregarContainers()
-    }
+    if (!codigo) return alert("Código é obrigatório")
 
-    carregarNavios(); carregarPortos(); carregarEscalas(); carregarContainers()
-  </script>
+    const res = await fetch("/api/containers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ codigo, tipo, peso_kg, escala_id })
+    })
+    if (!res.ok) return alert((await res.json()).erro)
+
+    document.getElementById("c-codigo").value = ""
+    document.getElementById("c-peso").value = ""
+    carregarContainers()
+  }
+
+  async function deletarContainer(id, escala_id) {
+    await fetch(`/api/containers/${id}`, { method: "DELETE" })
+    if (escala_id) {
+      toggleDetalhesEscala(escala_id)
+      toggleDetalhesEscala(escala_id)
+    }
+    carregarContainers()
+  }
+
+  // ── Utilitários ────────────────────────────────────────────────
+
+  async function deletar(entidade, id, recarregar) {
+    if (!confirm("Remover registro?")) return
+    await fetch(`/api/${entidade}/${id}`, { method: "DELETE" })
+    recarregar()
+  }
+
+  function formatarData(str) {
+    if (!str) return "—"
+    return new Date(str).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
+  }
+
+  function badgeStatus(status) {
+    const map = {
+      atracado: ["badge-verde", "Atracado"],
+      agendado: ["badge-amarelo", "Agendado"],
+      concluido: ["badge-cinza", "Concluído"],
+    }
+    const [cls, label] = map[status] ?? ["badge-cinza", status]
+    return `<span class="badge ${cls}">${label}</span>`
+  }
+
+  // Carrega dados iniciais
+  carregarResumo()
+  carregarNavios()
+  carregarPortos()
+</script>
 </body>
 </html>
